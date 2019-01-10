@@ -1,1 +1,40 @@
-<iframe src="<%= comp.random_fact %>" height=512></iframe>
+<style>
+  #random_fact {
+    opacity: 0;
+  }
+
+  #random_fact.load {
+  	opacity: 1;
+  	animation-name: fadeInOpacity;
+  	animation-iteration-count: 1;
+  	animation-timing-function: ease-in;
+  	animation-duration: 2s;
+  }
+
+  @keyframes fadeInOpacity {
+  	0% {
+  		opacity: 0;
+  	}
+  	100% {
+  		opacity: 1;
+  	}
+  }
+
+</style>
+
+<script>
+  function bar(_options, params, _event) {
+    // Reload iFrame: https://stackoverflow.com/questions/86428/what-s-the-best-way-to-reload-refresh-an-iframe
+    document.getElementById('random_fact').src += '';
+    return {action: 'bar', content: {data: params.text}, statusCode: 200};
+  }
+
+  function load() {
+    document.getElementById('random_fact').className = " load";
+  }
+
+  window.onload = load;
+</script>
+<iframe id="random_fact" src="<%= comp.random_fact %>" height=512 <%= erb :"components/event", :locals => {comp: comp, events: comp.events, parent_id: comp.id} %>></iframe>
+
+
