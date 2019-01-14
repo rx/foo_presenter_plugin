@@ -23,10 +23,17 @@
 </style>
 
 <script>
-  function bar(_options, params, _event) {
-    // Reload iFrame: https://stackoverflow.com/questions/86428/what-s-the-best-way-to-reload-refresh-an-iframe
-    document.getElementById('random_fact').src += '';
-    return {action: 'bar', content: {data: params.text}, statusCode: 200};
+  function bar(_options, params, _event, results) {
+    var promise = new Promise(function (resolve) {
+      // Reload iFrame: https://stackoverflow.com/questions/86428/what-s-the-best-way-to-reload-refresh-an-iframe
+      document.getElementById('random_fact').src += '';
+      var result = {action: 'bar', content: {data: params.text}, statusCode: 200};
+      result.content = JSON.stringify(result.content);
+      results.push(result);
+      resolve(results);
+    });
+    
+    return promise;
   }
 
   function load() {
