@@ -11,7 +11,6 @@ module Voom
             super(type: :foo, **attribs_, &block)
             expand!
           end
-
         end
       end
     end

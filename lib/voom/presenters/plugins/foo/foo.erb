@@ -23,10 +23,15 @@
 </style>
 
 <script>
-  function bar(_options, params, _event) {
+  function bar(_options, params, _event, results) {
     // Reload iFrame: https://stackoverflow.com/questions/86428/what-s-the-best-way-to-reload-refresh-an-iframe
-    document.getElementById('random_fact').src += '';
-    return {action: 'bar', content: {data: params.text}, statusCode: 200};
+    var promiseObj = new Promise(function (resolve) {
+                console.log("Bar called");
+                document.getElementById('random_fact').src += '';
+                results.push({action: 'bar', content: JSON.stringify({data: params.text}), statusCode: 200});
+                resolve(results);
+            });
+            return promiseObj;
   }
 
   function load() {
