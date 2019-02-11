@@ -190,31 +190,64 @@ Many frameworks require a common base class, this approach is very light by desi
 
 Container data in the WebClient is collected and submitted using the following sequence:
 
-In your element markup include the `vInput` class on an DOM element.
-Define the vComponent attribute as an object that implements the following methods:
-
-
-    // Called whenever a component is about to be submitted.
-    // form may be null if the validation is occuring from a container that is not a form.
-    // returns true on success
-    // returns on failure return an error object that can be processed by VErrors:
-    //    { email: ["email must be filled", "email must be from your domain"] }
-    //    { page: ["must be filled"] }
-    validate(form, params)
-
-    // adds the key value pairs to be submitted/posted
-    // Called after validate
-    prepareSubmit(params)
-
-    // Clears the component
-    clear()
+In your element markup include the `v-input` class on an DOM element.
 
 You can see the container calling code here:
 https://github.com/rx/presenters/blob/master/views/mdc/assets/js/components/base-container.js
 
-If the component responds to events then you need to bind the event to the correct element
+If you add the v-plugin class to the DOM element along with a data-plugin-callback dataset that contains a string
+with the class name to proxy the plugin events to.
 
-    // idempotent event handling initialization
-    initEventListener(eventName, eventHandler)
 
-TODO: Provide sample POJS implementation
+Sample callback class:
+
+    // Optional Javascript callback class. You typically need to define this when you have data to submit, or special
+    // event handling to bind to.
+    // To hook this up you need to provide the `v-plugin` class and
+    // data-plugin-callback='RandomFacts' on the element.
+    class RandomFacts {
+      // passed the DOM element that has the .v-plugin class on it.
+      constructor(element) {
+      }
+  
+      // optional.
+      // Called before the component is submitted via post/put. Allows the component to add its key/value pairs to the
+      // submitted data.
+      // If you provide this you need to add the v-input class to your DOM element to get called.
+      // Containers iterate their elements that have the v-input class defined on them and invoke the prepareSubmit
+      // function for each.
+      prepareSubmit(params) {
+        // params is a key,value pair. Add name/value like so:
+        // params.push(['some_name', 'some_value']);
+      }
+  
+      // optional.
+      // Called whenever a container is about to be submitted, before prepareSubmit.
+      // returns true on success
+      // returns on failure return an error object that can be processed by VErrors:
+      //    { email: ["email must be filled", "email must be from your domain"] }
+      //    { page:  ["must be filled"] }
+      // Returning an error stops the submission.
+      validate(formData) {
+        return true;
+      }
+  
+      // optional.
+      // Clear's the control
+      clear() {
+      }
+  
+      // called to add an event listener to the component
+      // this only needs to be defined if you need the event handler to be bound to the component
+      // in a different manner.  Here is the default implementation you get if you don't define this method:
+      initEventListener(eventName, eventHandler) {
+        if (typeof this.eventsHandler === 'undefined') {
+          this.eventsHandler = {};
+        }
+        if (!this.eventsHandler[eventName]) {
+          // Delegate to the component if possible
+          this.eventsHandler[eventName] = eventHandler;
+          this.element.addEventListener(eventName, eventHandler);
+        }
+      }
+    }
