@@ -29,6 +29,11 @@ module Voom
                         locals: {comp: comp,
                                  components: components, index: index}
           end
+
+          def render_header_foo(pom, render:)
+            view_dir = File.join(__dir__, 'foo')
+            render.call :erb, :foo_header, views: view_dir
+          end
         end
         module WebClientActions
           def action_data_bar(action, _parent_id, *)
