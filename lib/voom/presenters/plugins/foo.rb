@@ -29,8 +29,10 @@ module Voom
                         locals: {comp: comp,
                                  components: components, index: index}
           end
-
-          def render_header_foo(pom, render:)
+          # The string returned from this method will be added to the HTML header section of the page layout
+          # It will be called once for the page.
+          # The pom is passed along with the sinatra render method.
+          def render_header_foo(_pom, render:)
             view_dir = File.join(__dir__, 'foo')
             render.call :erb, :foo_header, views: view_dir
           end
