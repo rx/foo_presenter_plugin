@@ -1,95 +1,20 @@
 <style>
-  #random_fact {
-    opacity: 0;
-  }
-
-  #random_fact.load {
-    opacity: 1;
-    animation-name: fadeInOpacity;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-in;
-    animation-duration: 2s;
-  }
-
-  @keyframes fadeInOpacity {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
+  <%= File.read(File.expand_path('foo.css', __dir__)  ) %>
 </style>
 
 <script>
-  // This event callback pushes its results into the results array and returns a promise.
-  function bar(_options, params, _event, results) {
-    // Reload iFrame: https://stackoverflow.com/questions/86428/what-s-the-best-way-to-reload-refresh-an-iframe
-    var promiseObj = new Promise(function(resolve) {
-      console.log('Bar called');
-      document.getElementById('random_fact').src += '';
-      results.push({action: 'bar', content: JSON.stringify({data: params.text}), statusCode: 200});
-      resolve(results);
-    });
-    return promiseObj;
-  }
+  // This file is defining the callback method that will be invoked when the custom plugin action `bar` is encountered
+  <%= File.read(File.expand_path('bar.js', __dir__)  ) %>
+  // This file is defining the plugin component that will be delegated to by the WebClient.
+  <%= File.read(File.expand_path('foo.js', __dir__)  ) %>
 
+  // Custom javascript specific to this sample plugin - sets the class name that causes the initial load to
+  // animate a transition (defined in the foo.css file)
   function load() {
     document.getElementById('random_fact').className = ' load';
   }
 
   window.onload = load;
-
-  // Optional Javascript callback class. You typically need to define this when you have data to submit, or special
-  // event handling to bind to.
-  // To hook this up you need to provide the `v-plugin` class and
-  // data-plugin-callback='RandomFacts' on the element.
-  class RandomFacts {
-    // passed the DOM element that has the .v-plugin class on it.
-    constructor(element) {
-    }
-
-    // optional.
-    // Called before the component is submitted via post/put. Allows the component to add its key/value pairs to the
-    // submitted data.
-    // If you provide this you need to add the v-input class to your DOM element to get called.
-    // Containers iterate their elements that have the v-input class defined on them and invoke the prepareSubmit
-    // function for each.
-    prepareSubmit(params) {
-      // params is a key,value pair. Add name/value like so:
-      // params.push(['some_name', 'some_value']);
-    }
-
-    // optional.
-    // Called whenever a container is about to be submitted, before prepareSubmit.
-    // returns true on success
-    // returns on failure return an error object that can be processed by VErrors:
-    //    { email: ["email must be filled", "email must be from your domain"] }
-    //    { page:  ["must be filled"] }
-    // Returning an error stops the submission.
-    validate(formData) {
-      return true;
-    }
-
-    // optional.
-    // Clear's the control
-    clear() {
-    }
-
-    // called to add an event listener to the component
-    // this only needs to be defined if you need the event handler to be bound to the component
-    // in a different manner.  Here is the default implementation you get if you don't define this method:
-    initEventListener(eventName, eventHandler) {
-      if (typeof this.eventsHandler === 'undefined') {
-        this.eventsHandler = {};
-      }
-      if (!this.eventsHandler[eventName]) {
-        // Delegate to the component if possible
-        this.eventsHandler[eventName] = eventHandler;
-        this.element.addEventListener(eventName, eventHandler);
-      }
-    }
-  }
 </script>
 
 
